@@ -9,7 +9,7 @@ This library is useful for DevOps/Linux engineers.
 
 ## Info
 
-CmdWrapper is a set of object oriented classes that can help you wrap any Linux
+Python-CmdWrapper is a set of object oriented classes that can help you wrap any Linux
 command and use it as a Python 3 method.
 
 We are following the best practices of sofware engineering to offer a Python
