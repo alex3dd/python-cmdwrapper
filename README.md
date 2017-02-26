@@ -2,7 +2,7 @@
 
 ## CmdWrapper - wrap any Linux command and use it as a Python method
 
-This library can be useful for DevOps/Linux engineers.
+This library is useful for DevOps/Linux engineers.
 
 ## Author
 
