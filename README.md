@@ -4,8 +4,7 @@ Wrap any Linux command and use it as a Python method.
 
 # Author
 
-Author: Achraf Cherti (aka Asher256)
-Email: asher256@gmail.com
+Achraf Cherti (aka Asher256) <asher256@gmail.com>
 
 # Code quality
 
