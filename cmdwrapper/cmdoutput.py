@@ -12,47 +12,47 @@
 
 
 class CmdOutput(object):
-    """The output of a command (like stdout or stderr)."""
+    """The output of a command (stdout or stderr)."""
 
     def __init__(self, output):
         """Store the output internally."""
-        self._output = self._to_utf8(output)
-
-    def __str__(self):
-        """Return the output."""
-        return self._output
-
-    @property
-    def output(self):
-        """String version of the output."""
-        return self.__str__()
+        self._output = None
+        self.output = output
 
     @property
     def lines(self):
-        """Return the output as a list (each item is a line of the output)."""
-        return self._output.splitlines()
+        """Return the output as a list (each item is a line)."""
+        return self.output.splitlines()
 
     @property
     def firstline(self):
         """First line of the output."""
-        if self._output != '':
+        if self.output != '':
             return self.lines[0]
 
         return ''
 
-    def show(self):
-        """Print the output."""
-        print(self._output)
+    @property
+    def output(self):
+        """String version of the output."""
+        return self._output
 
-    @staticmethod
-    def _to_utf8(output):
+    @output.setter
+    def output(self, output):
         """Return an unified version of the output."""
         if output is None:
             output = ''
+        else:
+            assert isinstance(output, (bytes, str))
+
         if isinstance(output, bytes):
             output = output.decode('utf-8', errors='ignore')
-        assert isinstance(output, str)
-        return output
+
+        self._output = output
+
+    def __str__(self):
+        """Return the output."""
+        return self.output
 
 
 def main():
@@ -71,17 +71,21 @@ def main():
             second_line = b'Second Line'
             byte_content = first_line + b'\n' + second_line
 
-            for content in [byte_content, str(byte_content)]:
+            for content in [byte_content, byte_content.decode('utf-8')]:
                 cmd_output = CmdOutput(content)
 
                 if isinstance(content, bytes):
                     content = content.decode('utf-8')
 
                 # CmdOutput.__str__()
-                self.assertEqual(content, str(cmd_output.output))
+                self.assertEqual(content, str(cmd_output))
 
                 # CmdOutput.output
                 self.assertEqual(content, cmd_output.output)
+
+                # CmdOutput.firstline
+                self.assertEqual(cmd_output.firstline,
+                                 first_line.decode('utf-8'))
 
                 # test CmdOutput.lines
                 self.assertEqual(cmd_output.lines[0],
@@ -89,6 +93,11 @@ def main():
 
                 self.assertEqual(cmd_output.lines[1],
                                  second_line.decode('utf-8'))
+
+            # test the case of an empty content
+            cmd_output = CmdOutput('')
+            cmd_output = CmdOutput(None)
+            self.assertEqual(cmd_output.firstline, '')
 
     tests = unittest.TestLoader().loadTestsFromTestCase(Test_CmdOutput)
     unittest.TextTestRunner(verbosity=5).run(tests)

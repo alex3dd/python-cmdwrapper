@@ -1,4 +1,4 @@
-Wrap a Linux command and use it as a Python method.
+Wrap any Linux command and use it as a Python method.
 
 # Author
 

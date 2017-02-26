@@ -8,7 +8,7 @@
 # This source code follows the PEP-8 style guide:
 # https://www.python.org/dev/peps/pep-0008/
 #
-"""__init__ for cmdwrapper."""
+"""Wrap any Linux command and use it as a Python method."""
 
 
 from cmdwrapper.cmdoutput import CmdOutput  # noqa
