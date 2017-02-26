@@ -9,8 +9,8 @@ python:
 
 install:
   # Travis already include pytest, need to upgrade it when unpinned
+  # - pip install -r requirements.txt
   - if [[ "${DEPS_RESOLVE}" == "UNPINNED" ]]; then pip install -U pytest; fi
-  - pip install -r requirements.txt
   - pip install -q coveralls --use-wheel
 
 script:
