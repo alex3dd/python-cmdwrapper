@@ -50,6 +50,7 @@ class CmdProc(object):
     """Low level process management (run process, wait until completed...)."""
 
     # pylint: disable=redefined-builtin
+    # pylint: disable=too-many-arguments
     def __init__(self, cmd, cwd=None, env=None, stdout=PIPE, stderr=PIPE,
                  input=None, timeout=None):
         """Init the process.
