@@ -1,5 +1,7 @@
 Wrap any Linux command and use it as a Python method.
 
+[![Build Status](https://travis-ci.org/Asher256/python-cmdwrapper.svg?branch=master)](https://travis-ci.org/Asher256/python-cmdwrapper)
+
 # Author
 
 Author: Achraf Cherti (aka Asher256)
