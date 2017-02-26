@@ -38,3 +38,6 @@ The code quality is tested and validated with Travis CI and:
 The goal is to have a source code that is 100% covered with unit-tests and
 following Python's standards (PEP8) and best practices (pylint recommendations).
 
+## Contribution
+
+I encourage you to fork the project and send your pull requests! I
