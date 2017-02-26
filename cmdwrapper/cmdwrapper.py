@@ -192,7 +192,7 @@ class CmdWrapper(object):
         return self
 
 
-def main():
+def old_main():
     """The program starts here."""
     import logging
     logging.basicConfig(level=logging.DEBUG,
@@ -207,6 +207,33 @@ def main():
     print()
     print('exit code:', result.returncode)
     sys.exit(0)
+
+
+def main():
+    """Test the class CmdResult."""
+    import unittest
+
+    class TestCmdResult(unittest.TestCase):
+        """Testing the class CmdResult."""
+
+        def test_cmdoutput(self):
+            """Test: CmdResult()."""
+            stdout = 'stdout content'
+            stderr = 'stderr content'
+            returncode = 101
+
+            cmd_result = CmdResult(stdout=stdout, stderr=stderr,
+                                   returncode=returncode)
+            self.assertEqual(cmd_result.stdout.output, stdout)
+            self.assertEqual(cmd_result.stderr.output, stderr)
+            self.assertEqual(cmd_result.returncode, returncode)
+
+            to_str = str(cmd_result)
+            self.assertIn(stdout, to_str)
+            self.assertIn(stderr, to_str)
+
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdResult)
+    unittest.TextTestRunner(verbosity=5).run(tests)
 
 
 if __name__ == '__main__':
