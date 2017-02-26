@@ -9,4 +9,4 @@
 /*.egg
 /.eggs
 
-/.coverage
+.coverage
