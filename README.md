@@ -4,9 +4,8 @@
 
 This library is useful for DevOps/Linux engineers.
 
-## Author
-
-Achraf Cherti (aka Asher256) <asher256@gmail.com>
+Author: Achraf Cherti (aka Asher256) <asher256@gmail.com>
+Github: https://github.com/Asher256/python-cmdwrapper
 
 ## Info
 
