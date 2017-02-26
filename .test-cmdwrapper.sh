@@ -18,10 +18,10 @@ main() {
   local filename
 
   for filename in cmdwrapper/*; do
-    pep8 "$filename"
-    pyflakes "$filename"
     pep257 "$filename"
+    flake8 "$filename"
     pylint "$filename"
+    coverage report --fail-under=100 "$filename"
   done
 
   exit 0
