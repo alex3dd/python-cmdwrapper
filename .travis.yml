@@ -10,13 +10,14 @@ python:
 install:
   # Travis already include pytest, need to upgrade it when unpinned
   # - pip install -r requirements.txt
-  - if [[ "${DEPS_RESOLVE}" == "UNPINNED" ]]; then pip install -U pytest; fi
-  - pip install -q coveralls --use-wheel
+  # - if [[ "${DEPS_RESOLVE}" == "UNPINNED" ]]; then pip install -U pytest; fi
+  # - pip install -q coveralls --use-wheel
+  - pip install pylint pyflakes pep8 pep257
 
 script:
-  - py.test --cov=cmdwrapper --pep8 -v
+  - ./.test-cmdwrapper.sh
 
-after_success:
-  - coveralls
+# after_success:
+#  - coveralls
 
 # vim:ai:et:sw=2:ts=2:sts=2:tw=0:fenc=utf-8
