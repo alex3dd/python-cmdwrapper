@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/Asher256/python-cmdwrapper.svg?branch=master)](https://travis-ci.org/Asher256/python-cmdwrapper)
 
-# Wrap any Linux command and use it as a Python method.
+# Wrap any Linux command and use it as a Python method
 
 This library can be useful for DevOps/Linux engineers.
 
