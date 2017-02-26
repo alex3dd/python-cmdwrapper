@@ -62,7 +62,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(message)s')
 
-    class Test_CmdOutput(unittest.TestCase):
+    class TestCmdOutput(unittest.TestCase):
         """Testing the class CmdOutput."""
 
         def test_cmdoutput(self):
@@ -99,7 +99,7 @@ def main():
             cmd_output = CmdOutput(None)
             self.assertEqual(cmd_output.firstline, '')
 
-    tests = unittest.TestLoader().loadTestsFromTestCase(Test_CmdOutput)
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdOutput)
     unittest.TextTestRunner(verbosity=5).run(tests)
 
 
