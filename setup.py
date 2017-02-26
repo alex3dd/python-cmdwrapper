@@ -13,7 +13,6 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-from cmdwrapper import __version__ as VERSION
 from cmdwrapper import __doc__ as DESCRIPTION
 
 here = path.abspath(path.dirname(__file__))
