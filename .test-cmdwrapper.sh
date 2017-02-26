@@ -12,17 +12,35 @@
 
 set -o errexit
 set -o nounset
-set -o xtrace
+# set -o xtrace
+
+COVERAGE_MIN=100
 
 main() {
   local filename
 
   for filename in cmdwrapper/*; do
+    echo "pep257 $filename"
     pep257 "$filename"
+
+    echo "flake8 $filename"
     flake8 "$filename"
+
+    echo pylint "$filename"
     pylint "$filename"
-    coverage report --fail-under=100 "$filename"
+
+    echo coverage run "$filename"
+    coverage run "$filename"
+
+    echo coverage report "$filename"
+    if ! coverage report "--fail-under=$COVERAGE_MIN" "$filename"; then
+      echo "ERROR: The coverage of $filename is less then ${COVERAGE_MIN}%"
+      exit 1
+    fi
   done
+
+  echo
+  echo "SUCCESS!"
 
   exit 0
 }
