@@ -1,4 +1,4 @@
-Wrap a Linux command and use it as a Python 3 function.
+Wrap a Linux command and use it as a Python method.
 
 # Author
 
@@ -7,7 +7,5 @@ Email: asher256@gmail.com
 
 # License
 
-GPL
-
-
+LGPL
 
