@@ -15,6 +15,7 @@ import platform
 import subprocess
 from cmdoutput import CmdOutput
 from cmdresult import CmdResult
+from cmdproc import CmdProc
 
 
 assert platform.system() == 'Linux'
@@ -32,6 +33,7 @@ class CmdRunning(object):
 
     def __init__(self, cmd_proc):
         """Init the process."""
+        assert isinstance(cmd_proc, CmdProc)
         self.proc = cmd_proc
         self.proc.run()  # run the process automatically
 

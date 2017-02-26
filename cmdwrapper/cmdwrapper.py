@@ -133,9 +133,20 @@ class CmdWrapper(object):
 
 
 def main():
-    """Main function."""
-    pass
+    """The program starts here."""
+    import logging
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(message)s')
 
+    find = CmdWrapper('find')
+    result = find('/etc', '-maxdepth', '1', '-name', 'e*')
+
+    print('proc stdout:', result.stdout.lines)
+    print()
+    print('proc stderr:', result.stderr.lines)
+    print()
+    print('exit code:', result.returncode)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

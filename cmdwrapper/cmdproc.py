@@ -15,7 +15,6 @@ import platform
 import shlex
 import logging
 import subprocess
-from cmdrunning import CmdRunning
 
 
 assert platform.system() == 'Linux'
@@ -31,19 +30,19 @@ STDOUT = subprocess.STDOUT
 class CmdProcError(Exception):
     """Exception raised when a command fails (returncode != 0)."""
 
-    def __init__(self, error_msg, cmd_running=None):
-        """Store the cmd_running (which contains stdout, stderr, returncode).
+    def __init__(self, error_msg, cmd_proc=None):
+        """Store the cmd_proc (which contains stdout, stderr, returncode).
 
         error_msg: the Python exception's error message (string)
-        cmd_running: the cmd_running instance
+        cmd_proc: the cmd_proc instance
 
         """
         assert isinstance(error_msg, str)
-        if cmd_running is not None:
-            assert isinstance(cmd_running, CmdRunning)
+        if cmd_proc is not None:
+            assert isinstance(cmd_proc, CmdProc)
 
         self._error_msg = error_msg
-        self._cmd_running = cmd_running
+        self._cmd_proc = cmd_proc
         super().__init__(self._error_msg)
 
 
