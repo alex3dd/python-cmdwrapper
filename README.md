@@ -39,4 +39,4 @@ following Python's standards (PEP8) and best practices (pylint recommendations).
 
 ## Contribution
 
-I encourage you to fork the project and send your pull requests! I
+I encourage you to fork the project and send me your pull requests! I
