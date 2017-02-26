@@ -68,7 +68,8 @@ def main():
         def test_cmdoutput(self):
             """Test: CmdOutput()."""
             first_line = b'First Line'
-            byte_content = first_line + b'\nSecond Line'
+            second_line = b'Second Line'
+            byte_content = first_line + b'\n' + second_line
 
             for content in [byte_content, str(byte_content)]:
                 cmd_output = CmdOutput(content)
@@ -81,6 +82,13 @@ def main():
 
                 # CmdOutput.output
                 self.assertEqual(content, cmd_output.output)
+
+                # test CmdOutput.lines
+                self.assertEqual(cmd_output.lines[0],
+                                 first_line.decode('utf-8'))
+
+                self.assertEqual(cmd_output.lines[1],
+                                 second_line.decode('utf-8'))
 
     tests = unittest.TestLoader().loadTestsFromTestCase(Test_CmdOutput)
     unittest.TextTestRunner(verbosity=5).run(tests)
