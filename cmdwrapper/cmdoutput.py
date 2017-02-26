@@ -10,6 +10,13 @@
 #
 """The output of a command (stdout or stderr)."""
 
+import sys
+import platform
+
+
+assert platform.system() == 'Linux'
+assert sys.version_info >= (3, 2), "The Python version need to be >= 3.2"
+
 
 class CmdOutput(object):
     """The output of a command (stdout or stderr)."""
