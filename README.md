@@ -13,8 +13,8 @@ Achraf Cherti (aka Asher256) <asher256@gmail.com>
 CmdWrapper is a set of object oriented classes that can help DevOps/Linux
 engineers to wrap any Linux command and use it as a Python 3 method.
 
-We are following some good practices of sofware engineering to offer a Python
-module that is easy to use, extensible and fully compatible with the Python 3
+We are following the practices of sofware engineering to offer a Python module
+that is easy to use, extensible and fully compatible with the Python 3
 standards (PEP8, pylint recommendations...).
 
 ## Example
