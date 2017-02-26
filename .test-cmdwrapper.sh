@@ -29,6 +29,8 @@ main() {
     echo "+ pylint $filename"
     pylint "$filename"
 
+    continue
+
     echo "+ coverage run $filename"
     coverage run "$filename"
 
