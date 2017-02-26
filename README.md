@@ -1,4 +1,4 @@
-Wrap any Linux command and use it as a Python method.
+Wrap any Linux command and use it as a Python method. This library can be useful for DevOps/Linux engineers.
 
 [![Build Status](https://travis-ci.org/Asher256/python-cmdwrapper.svg?branch=master)](https://travis-ci.org/Asher256/python-cmdwrapper)
 
@@ -6,19 +6,35 @@ Wrap any Linux command and use it as a Python method.
 
 Achraf Cherti (aka Asher256) <asher256@gmail.com>
 
-# Code quality
+# Info
 
-The first goal is to create an object oriented wrapper that is maintainable,
-fully documented and easy to use.
+CmdWrapper is a set of object oriented classes that can help DevOps/Linux
+engineers to wrap any Linux command and use it as a Python 3 method.
 
-The code quality is tested and validated with:
+We are following some good practices of sofware engineering and design patterns
+to offer a Python module that is easy to use, extensible and fully compatible
+with the Python 3 standards (like PEP8).
+
+# Example
+```
+from CmdWrapper import CmdWrapper
+
+find = CmdWrapper('find')
+
+result = find('/etc', '-maxdepth', '1', '-name', 'e*')
+print('proc stdout:', result.stdout)
+
+```
+
+# Code Quality
+The code quality is tested and validated with Travis CI and:
 - pylint (Python checker)
-- pyflakes (Python checker)
-- mccabe (code complexity)
+- flake8 (Python checker)
+- pep257 (docstrings)
 - coverage.py (coverage of the unit-tests)
 
-My goal is to write a source code that is 100% covered with unit-tests and
-fully compatible with Python's standards and good practices.
+The goal is to have a source code that is 100% covered with unit-tests and
+is following Python's standards (like PEP8) and best practices.
 
 # License
 
