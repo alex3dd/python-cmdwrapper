@@ -20,19 +20,19 @@ main() {
   local filename
 
   for filename in cmdwrapper/*; do
-    echo "pep257 $filename"
+    echo "+ pep257 $filename"
     pep257 "$filename"
 
-    echo "flake8 $filename"
+    echo "+ flake8 $filename"
     flake8 "$filename"
 
-    echo pylint "$filename"
+    echo "+ pylint $filename"
     pylint "$filename"
 
-    echo coverage run "$filename"
+    echo "+ coverage run $filename"
     coverage run "$filename"
 
-    echo coverage report "$filename"
+    echo "+ coverage report $filename"
     if ! coverage report "--fail-under=$COVERAGE_MIN" "$filename"; then
       echo "ERROR: The coverage of $filename is less then ${COVERAGE_MIN}%"
       exit 1
