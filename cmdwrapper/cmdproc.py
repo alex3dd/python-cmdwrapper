@@ -8,7 +8,7 @@
 # This source code follows the PEP-8 style guide:
 # https://www.python.org/dev/peps/pep-0008/
 #
-"""The result of a command."""
+"""Run a process."""
 
 import sys
 import platform
@@ -28,7 +28,7 @@ STDOUT = subprocess.STDOUT
 
 
 class CmdProcError(Exception):
-    """Exception raised when a command fails (returncode != 0)."""
+    """Exception raised when a process fails (returncode != 0)."""
 
     def __init__(self, error_msg, cmd_proc=None):
         """Store the cmd_proc (which contains stdout, stderr, returncode).

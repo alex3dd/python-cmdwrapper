@@ -14,13 +14,73 @@ import sys
 from copy import deepcopy, copy
 from pprint import pformat
 import platform
-from cmdrunning import CmdRunning
+from cmdoutput import CmdOutput
 from cmdproc import CmdProc
 from cmdproc import PIPE, DEVNULL, STDOUT
 
 
 assert platform.system() == 'Linux'
 assert sys.version_info >= (3, 2), "The Python version need to be >= 3.2"
+
+
+# pylint: disable=too-few-public-methods
+class CmdResult(object):
+    """The result of a command (stdout, stderr and return code)."""
+
+    def __init__(self, stdout, stderr, returncode):
+        """Init the CmdResult with stdout, stderr and returncode."""
+        assert isinstance(stdout, (bytes, str))
+        assert isinstance(stderr, (bytes, str))
+        assert isinstance(returncode, int)
+        self.stdout = CmdOutput(stdout)
+        self.stderr = CmdOutput(stderr)
+        self.returncode = returncode
+
+    def __str__(self):
+        """Return stdout."""
+        output = str(self.stdout).rstrip('\r\n').strip() + \
+            str(self.stderr).rstrip('\r\n').strip() + '\n'
+        return output
+
+
+class CmdRunning(object):
+    """A running process."""
+
+    def __init__(self, cmd_proc):
+        """Init the process."""
+        assert isinstance(cmd_proc, CmdProc)
+        self.proc = cmd_proc
+        self.proc.run()  # run the process automatically
+
+    def wait(self):
+        """Wait until the process is terminated."""
+        self.proc.wait()
+        return self
+
+    @property
+    def returncode(self):
+        """Return the exit code of the command."""
+        return self.proc.returncode
+
+    @property
+    def stdout(self):
+        """Return stdout."""
+        self.wait()
+        return CmdOutput(self.proc.stdout)
+
+    @property
+    def stderr(self):
+        """Return stderr."""
+        self.wait()
+        return CmdOutput(self.proc.stderr)
+
+    @property
+    def result(self):
+        """Return a CmdResult() instance (stdout, stderr and returncode)."""
+        self.wait()
+        return CmdResult(stdout=self.proc.stdout,
+                         stderr=self.proc.stderr,
+                         returncode=self.proc.returncode)
 
 
 class CmdWrapper(object):
