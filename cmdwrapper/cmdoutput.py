@@ -8,7 +8,7 @@
 # This source code follows the PEP-8 style guide:
 # https://www.python.org/dev/peps/pep-0008/
 #
-"""The output (stdout, stderr) of a command."""
+"""The output of a command (stdout or stderr)."""
 
 
 class CmdOutput(object):
@@ -26,7 +26,7 @@ class CmdOutput(object):
 
     @property
     def firstline(self):
-        """First line of the output."""
+        """Return the first line of the output."""
         if self.output != '':
             return self.lines[0]
 
@@ -34,8 +34,12 @@ class CmdOutput(object):
 
     @property
     def output(self):
-        """String version of the output."""
+        """Return the output's content (string)."""
         return self._output
+
+    def __str__(self):
+        """Return the output."""
+        return self.output
 
     @output.setter
     def output(self, output):
@@ -50,17 +54,10 @@ class CmdOutput(object):
 
         self._output = output
 
-    def __str__(self):
-        """Return the output."""
-        return self.output
-
 
 def main():
     """The program starts here."""
-    import logging
     import unittest
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(message)s')
 
     class TestCmdOutput(unittest.TestCase):
         """Testing the class CmdOutput."""
