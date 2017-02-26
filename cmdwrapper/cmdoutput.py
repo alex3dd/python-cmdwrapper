@@ -15,7 +15,7 @@ import platform
 
 
 assert platform.system() == 'Linux'
-assert sys.version_info >= (3, 2), "The Python version need to be >= 3.2"
+assert sys.version_info >= (3, 3), "The Python version need to be >= 3.3"
 
 
 class CmdOutput(object):
