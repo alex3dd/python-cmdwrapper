@@ -7,5 +7,5 @@ Email: asher256@gmail.com
 
 # License
 
-LGPL
+LGPL 2.1
 
