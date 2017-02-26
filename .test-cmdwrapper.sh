@@ -12,12 +12,16 @@
 
 set -o errexit
 set -o nounset
+set -o xtrace
 
 main() {
   local filename
 
   for filename in cmdwrapper/*; do
-    echo "$filename"
+    pep8 "$filename"
+    pyflakes "$filename"
+    pep257 "$filename"
+    pylint "$filename"
   done
 
   exit 0
