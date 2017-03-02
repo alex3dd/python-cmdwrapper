@@ -238,8 +238,8 @@ def main():
             self.assertListEqual(cmd_list, ['ls', '/'])
             self.assertEqual(cmd_str, 'ls /')
 
-            self._cmd(cmd='bash -c pwd', cwd='/usr')
-            self.assertEqual(self._stdout, '/usr')
+            self._cmd(cmd='bash -c pwd', cwd='/')
+            self.assertEqual(self._stdout, '/')
 
             self._cmd(cmd='bash -c "echo $MYTEST"',
                       env={'MYTEST': 'HIWORLD'})
