@@ -10,6 +10,7 @@
 #
 """Import the other classes."""
 
+# pylint: disable=wildcard-import
 from cmdwrapper.cmdoutput import *  # noqa
 from cmdwrapper.cmdwrapper import *  # noqa
 from cmdwrapper.cmdproc import *  # noqa
