@@ -11,12 +11,12 @@
 """Wrap any Linux command and run it as a Python method."""
 
 import sys
-from copy import deepcopy, copy
+from copy import deepcopy
 from pprint import pformat
 import platform
-from cmdwrapper.cmdoutput import CmdOutput
-from cmdwrapper.cmdproc import CmdProc
-from cmdwrapper.cmdproc import PIPE, DEVNULL, STDOUT
+from cmdoutput import CmdOutput
+from cmdproc import CmdProc
+from cmdproc import PIPE, DEVNULL, STDOUT
 
 
 assert platform.system() == 'Linux'
@@ -60,6 +60,7 @@ class CmdRunning(object):
     @property
     def returncode(self):
         """Return the exit code of the command."""
+        self.wait()
         return self.proc.returncode
 
     @property
@@ -171,15 +172,11 @@ class CmdWrapper(object):
 
     def copy(self):
         """Copy the object."""
-        return copy(self)
-
-    def deepcopy(self):
-        """Copy the object."""
         return deepcopy(self)
 
     def input(self, content):
         """The stdin's content."""
-        assert isinstance(content, str)
+        assert isinstance(content, bytes)
         self._cmd_proc_kwargs['input'] = content
         return self
 
@@ -190,23 +187,6 @@ class CmdWrapper(object):
         self._cmd_proc_kwargs['stdout'] = stdout
         self._cmd_proc_kwargs['stderr'] = stderr
         return self
-
-
-def old_main():
-    """The program starts here."""
-    import logging
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(message)s')
-
-    find = CmdWrapper('find')
-    result = find('/etc', '-maxdepth', '1', '-name', 'e*')
-
-    print('proc stdout:', result.stdout.lines)
-    print()
-    print('proc stderr:', result.stderr.lines)
-    print()
-    print('exit code:', result.returncode)
-    sys.exit(0)
 
 
 def main():
@@ -232,8 +212,68 @@ def main():
             self.assertIn(stdout, to_str)
             self.assertIn(stderr, to_str)
 
+    class TestCmdWrapper(unittest.TestCase):
+        """Testing the class CmdWrapper."""
+
+        def test_cmdwrapper(self):
+            """Test: CmdWrapper()."""
+            cmd_wrapper = CmdWrapper()
+            running = cmd_wrapper('bash', '-c', 'echo TEST')
+            self.assertEqual(running.stdout.firstline, 'TEST')
+
+            bash = CmdWrapper('bash')
+            repr(bash)
+
+            bash.cmd('bash').args('-c').cwd('/').timeout(2).output()
+            self.assertEqual(bash.get('cwd'), '/')
+            self.assertRaises(KeyError, bash.get('HelloWorld'))
+            bash.env({'TEST': 'HIWORLD'})
+
+            bash_copy = bash.copy()
+            # pylint: disable=protected-access
+            self.assertNotEqual(id(bash_copy._args), id(bash._args))
+
+            running = bash('echo $TEST')
+            self.assertEqual(running.stdout.firstline, 'HIWORLD')
+
+            running = bash('pwd')
+            self.assertEqual(running.stdout.firstline, '/')
+
+            bash.input(b'HIWORLD')
+            running = bash('cat')
+            self.assertEqual(running.stdout.firstline, 'HIWORLD')
+
+            cmd_result = running.result
+            self.assertEqual(str(running.stdout), str(cmd_result.stdout))
+            self.assertEqual(str(running.stderr), str(cmd_result.stderr))
+            self.assertEqual(running.returncode, cmd_result.returncode)
+
+    class TestCmdRunning(unittest.TestCase):
+        """Testing the class CmdRunning."""
+
+        def test_cmdrunning(self):
+            """Test: CmdRunning()."""
+            running = CmdRunning(CmdProc('bash -c "echo HIWORLD"'))
+            self.assertEqual(running.stdout.firstline, 'HIWORLD')
+
+            running = CmdRunning(CmdProc('bash -c "echo HIWORLD >&2"'))
+            self.assertEqual(running.stderr.firstline, 'HIWORLD')
+
+            running = CmdRunning(CmdProc('true'))
+            self.assertEqual(running.returncode, 0)
+
+    ret = 0
+
     tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdResult)
-    unittest.TextTestRunner(verbosity=5).run(tests)
+    ret |= unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
+
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdRunning)
+    ret |= unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
+
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdWrapper)
+    ret |= unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
+
+    sys.exit(int(not ret))
 
 
 if __name__ == '__main__':

@@ -268,7 +268,8 @@ def main():
             self.assertEqual(self._proc.stderr, None)
 
     tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdProc)
-    unittest.TextTestRunner(verbosity=5).run(tests)
+    ret = unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
+    sys.exit(int(not ret))
 
 
 if __name__ == '__main__':

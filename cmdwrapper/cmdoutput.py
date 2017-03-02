@@ -104,7 +104,8 @@ def main():
             self.assertEqual(cmd_output.firstline, '')
 
     tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdOutput)
-    unittest.TextTestRunner(verbosity=5).run(tests)
+    ret = unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
+    sys.exit(int(not ret))
 
 
 if __name__ == '__main__':

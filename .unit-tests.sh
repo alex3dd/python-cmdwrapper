@@ -31,6 +31,9 @@ test_with() {
 run_unit_tests() {
   local filename="$1"
 
+  # run the unit-tests first
+  python3 "$filename"
+
   test_with pep257 "$filename"
   test_with flake8 "$filename"
   test_with pylint "$filename"
