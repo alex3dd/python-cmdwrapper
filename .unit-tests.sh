@@ -47,6 +47,14 @@ run_unit_tests() {
 main() {
   local filename
 
+  if ! [[ -f cmdwrapper/cmdwrapper.py ]]; then
+    echo "ERROR: the directory $(pwd) where you started the script $0 is invalid." >&2
+    exit 1
+  fi
+
+  # clean-up
+  rm -fr .coverage htmlcov
+
   if [[ "$#" -gt 0 ]]; then
     run_unit_tests "$1"
   else
