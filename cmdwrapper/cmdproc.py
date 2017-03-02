@@ -15,6 +15,7 @@ import platform
 import shlex
 import logging
 import subprocess
+from subprocess import TimeoutExpired
 
 
 assert platform.system() == 'Linux'
@@ -120,10 +121,16 @@ class CmdProc(object):
 
         logging.debug('[RUN-CMD] %s', self._cmd_str)
 
+        # manage the stdin
+        stdin = None
+        if self._opts['input']:
+            stdin = PIPE
+
         # Run the process
         self._proc = subprocess.Popen(args=self._cmd_list,
                                       stdout=self._opts['stdout'],
                                       stderr=self._opts['stderr'],
+                                      stdin=stdin,
                                       cwd=self._opts['cwd'],
                                       env=self._opts['env'])
 
@@ -170,6 +177,7 @@ class CmdProc(object):
         """Convert a command 'cmd' to list + str."""
         assert isinstance(cmd, (list, str))
 
+        assert isinstance(cmd, (str, list))
         if isinstance(cmd, str):
             cmd_list = shlex.split(cmd)
             cmd_str = cmd
@@ -178,8 +186,6 @@ class CmdProc(object):
 
             # just for the output. Don't use cmd_str to execute.
             cmd_str = ' '.join(cmd)
-        else:
-            raise TypeError
 
         assert isinstance(cmd_list, list)
         assert isinstance(cmd_str, str)
@@ -188,8 +194,81 @@ class CmdProc(object):
 
 
 def main():
-    """Main function."""
-    pass
+    """Test the class CmdProc."""
+    import unittest
+
+    class TestCmdProc(unittest.TestCase):
+        """Testing the class CmdProc."""
+
+        def _cmd(self, **kwargs):
+            """Get a CmdProc started."""
+            # pylint: disable=attribute-defined-outside-init
+            self._proc = CmdProc(**kwargs)
+
+            self._proc.wait()   # run wait before run
+            # pylint: disable=protected-access
+            id_proc = id(self._proc._proc)
+
+            self._proc.run()  # run 2 times
+            # pylint: disable=protected-access
+            self.assertEqual(id(self._proc._proc), id_proc)
+
+            self._proc.run()  # run 2 times
+            # pylint: disable=protected-access
+            self.assertEqual(id(self._proc._proc), id_proc)
+
+            self._proc.wait()   # run after the process is stopped
+            # pylint: disable=protected-access
+            self.assertEqual(id(self._proc._proc), id_proc)
+
+        @property
+        def _stdout(self):
+            """Get stdout."""
+            return self._proc.stdout.decode('utf-8').strip()
+
+        def test_cmdproc(self):
+            """Test: CmdProc()."""
+            # pylint: disable=protected-access
+            cmd_list, cmd_str = CmdProc._cmd_split_types('ls /')
+            self.assertListEqual(cmd_list, ['ls', '/'])
+            self.assertEqual(cmd_str, 'ls /')
+
+            # pylint: disable=protected-access
+            cmd_list, cmd_str = CmdProc._cmd_split_types(['ls', '/'])
+            self.assertListEqual(cmd_list, ['ls', '/'])
+            self.assertEqual(cmd_str, 'ls /')
+
+            self._cmd(cmd='pwd', cwd='/usr')
+            self.assertEqual(self._stdout, '/usr')
+
+            self._cmd(cmd='bash -c "echo $MYTEST"',
+                      env={'MYTEST': 'HIWORLD'})
+            self.assertEqual(self._stdout, 'HIWORLD')
+
+            try:
+                timeout_working = False
+                self._cmd(cmd='sleep 10', timeout=1)
+            except TimeoutExpired:
+                timeout_working = True
+            self.assertEqual(timeout_working, True)
+
+            self._cmd(cmd='cat -',
+                      input=b'HIWORLD',
+                      timeout=3)
+            self.assertEqual(self._stdout, 'HIWORLD')
+
+            self._cmd(cmd='pwd', stdout=DEVNULL)
+            self.assertEqual(self._proc.stdout, None)
+
+            try:
+                self._cmd(cmd='ls /xxx/rrr/vvv/ttt/cmdproc',
+                          stderr=DEVNULL)
+            except CmdProcError:
+                pass
+            self.assertEqual(self._proc.stderr, None)
+
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdProc)
+    unittest.TextTestRunner(verbosity=5).run(tests)
 
 
 if __name__ == '__main__':

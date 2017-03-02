@@ -28,23 +28,32 @@ test_with() {
   return "$exit_code"
 }
 
+run_unit_tests() {
+  local filename="$1"
+
+  test_with pep257 "$filename"
+  test_with flake8 "$filename"
+  test_with pylint "$filename"
+
+  test_with coverage run "$filename"
+  test_with coverage html "$filename"
+
+  if ! test_with coverage report "--fail-under=$COVERAGE_MIN" "$filename"; then
+    echo "ERROR: The coverage of $filename is less then ${COVERAGE_MIN}%"
+    exit 1
+  fi
+}
+
 main() {
   local filename
 
-  for filename in cmdwrapper/*; do
-    test_with pep257 "$filename"
-    test_with flake8 "$filename"
-    test_with pylint "$filename"
-
-    continue
-
-    test_with coverage run "$filename"
-
-    if ! test_with coverage report "--fail-under=$COVERAGE_MIN" "$filename"; then
-      echo "ERROR: The coverage of $filename is less then ${COVERAGE_MIN}%"
-      exit 1
-    fi
-  done
+  if [[ "$#" -gt 0 ]]; then
+    run_unit_tests "$1"
+  else
+    for filename in cmdwrapper/*; do
+      run_unit_tests "$filename"
+    done
+  fi
 
   echo
   echo "SUCCESS!"
