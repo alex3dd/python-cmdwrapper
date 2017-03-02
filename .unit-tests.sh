@@ -16,26 +16,31 @@ set -o nounset
 
 COVERAGE_MIN=100
 
+test_with() {
+  local exit_code=0
+  echo "+ $*"
+  "$@" || exit_code="$?"
+
+  if [[ "$exit_code" -ne 0 ]]; then
+    echo "ERROR: $*" >&2
+  fi
+
+  return "$exit_code"
+}
+
 main() {
   local filename
 
   for filename in cmdwrapper/*; do
-    echo "+ pep257 $filename"
-    pep257 "$filename"
-
-    echo "+ flake8 $filename"
-    flake8 "$filename"
-
-    echo "+ pylint $filename"
-    pylint "$filename"
+    test_with pep257 "$filename"
+    test_with flake8 "$filename"
+    test_with pylint "$filename"
 
     continue
 
-    echo "+ coverage run $filename"
-    coverage run "$filename"
+    test_with coverage run "$filename"
 
-    echo "+ coverage report $filename"
-    if ! coverage report "--fail-under=$COVERAGE_MIN" "$filename"; then
+    if ! test_with coverage report "--fail-under=$COVERAGE_MIN" "$filename"; then
       echo "ERROR: The coverage of $filename is less then ${COVERAGE_MIN}%"
       exit 1
     fi
