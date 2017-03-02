@@ -50,7 +50,7 @@ run_unit_tests() {
 main() {
   local filename
 
-  if ! [[ -f cmdwrapper/cmdwrapper.py ]]; then
+  if ! [[ -f cmdwrapper/cmdoutput.py ]]; then
     echo "ERROR: the directory $(pwd) where you started the script $0 is invalid." >&2
     exit 1
   fi
