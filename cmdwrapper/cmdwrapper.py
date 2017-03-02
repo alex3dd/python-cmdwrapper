@@ -14,9 +14,9 @@ import sys
 from copy import deepcopy
 from pprint import pformat
 import platform
-from cmdoutput import CmdOutput
-from cmdproc import CmdProc
-from cmdproc import PIPE, DEVNULL, STDOUT
+from cmdwrapper import CmdOutput
+from cmdwrapper import CmdProc
+from cmdwrapper import PIPE, DEVNULL, STDOUT
 
 
 assert platform.system() == 'Linux'
