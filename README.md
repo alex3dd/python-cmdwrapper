@@ -23,15 +23,15 @@ with the Python standards (PEP8, pylint recommendations...).
 >>> find = CmdWrapper('find')
 
 >>> result = find('/etc', '-maxdepth', '1', '-name', 'e*')
->>> print('proc stdout:', result.stdout)
+>>> print('stdout:', result.stdout)
 /etc
 /etc/ethertypes
 /etc/environment
 
->>> print('proc stdout:', result.stdout.lines)
+>>> print('stdout lines:', result.stdout.lines)
 ['/etc', '/etc/ethertypes', '/etc/environment']
 
->>> print('proc stdout:', result.stdout.firstline)
+>>> print('stdout firstline:', result.stdout.firstline)
 /etc
 
 >>> print('exit-code:', result.returncode)
