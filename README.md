@@ -18,12 +18,24 @@ with the Python standards (PEP8, pylint recommendations...).
 
 ## Example
 ```
-from CmdWrapper import CmdWrapper
+>>> from CmdWrapper import CmdWrapper
 
-find = CmdWrapper('find')
+>>> find = CmdWrapper('find')
 
-result = find('/etc', '-maxdepth', '1', '-name', 'e*')
-print('proc stdout:', result.stdout)
+>>> result = find('/etc', '-maxdepth', '1', '-name', 'e*')
+>>> print('proc stdout:', result.stdout)
+/etc
+/etc/ethertypes
+/etc/environment
+
+>>> print('proc stdout:', result.stdout.lines)
+['/etc', '/etc/ethertypes', '/etc/environment']
+
+>>> print('proc stdout:', result.stdout.firstline)
+/etc
+
+>>> print('exit-code:', result.returncode)
+0
 
 ```
 
