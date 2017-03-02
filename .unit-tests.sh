@@ -55,6 +55,9 @@ main() {
     exit 1
   fi
 
+  export PYTHONPATH
+  PYTHONPATH=$(pwd)
+
   # clean-up
   rm -fr .coverage htmlcov
 
