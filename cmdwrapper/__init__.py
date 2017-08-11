@@ -13,13 +13,11 @@
 import sys
 from copy import deepcopy
 from pprint import pformat
-import platform
 from subprocess import PIPE, DEVNULL, STDOUT
 from cmdwrapper.cmdoutput import CmdOutput
 from cmdwrapper.cmdproc import CmdProc
 
 
-assert platform.system() == 'Linux'
 assert sys.version_info >= (3, 3), "The Python version need to be >= 3.3"
 
 

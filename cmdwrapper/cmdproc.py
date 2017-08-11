@@ -12,16 +12,12 @@
 
 import sys
 import os
-import platform
 import shlex
 import logging
 import subprocess
 from subprocess import TimeoutExpired
 
-
-assert platform.system() == 'Linux'
 assert sys.version_info >= (3, 3), "The Python version need to be >= 3.3"
-
 
 # Used by CmdRunning in the constructor arguments stdout/stderr
 PIPE = subprocess.PIPE
