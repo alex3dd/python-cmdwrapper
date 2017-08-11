@@ -38,9 +38,7 @@ class CmdResult(object):
 
     def __str__(self):
         """Return stdout."""
-        output = str(self.stdout).rstrip('\r\n').strip() + \
-            str(self.stderr).rstrip('\r\n').strip() + '\n'
-        return output
+        return str(self.stdout) + str(self.stderr)
 
 
 class CmdRunning(object):
@@ -53,7 +51,11 @@ class CmdRunning(object):
         self.proc.run()  # run the process automatically
 
     def wait(self):
-        """Wait until the process is terminated."""
+        """Wait until the process is terminated.
+
+        If the returncode != 0 an exception will be raised.
+
+        """
         self.proc.wait()
         return self
 

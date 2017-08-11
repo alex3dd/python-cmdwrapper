@@ -11,6 +11,7 @@
 """Run a process."""
 
 import sys
+import os
 import platform
 import shlex
 import logging
@@ -152,6 +153,13 @@ class CmdProc(object):
             self.stdout, self.stderr = \
                 self._proc.communicate(input=self._opts['input'],
                                        timeout=self._opts['timeout'])
+
+            if self.stdout is None:
+                self.stdout = b''
+
+            if self.stderr is None:
+                self.stderr = b''
+
             self.returncode = self._proc.returncode
 
             if self.returncode != 0:
@@ -165,11 +173,13 @@ class CmdProc(object):
 
     def _cmd_error_msg(self, err_msg):
         """Return a string you can use for the command's exception."""
-        error_msg = '{}\n\nCOMMAND: {}\n\nCOMMAND OUTPUT: {}{}\n' \
+        output = self.stdout.rstrip()
+        output += (b'' if output == b'' else os.linesep.encode())
+        output += self.stderr
+        error_msg = '{}\n\nCOMMAND: {}\n\nOUTPUT: {}\n' \
                     .format(err_msg,
                             self._cmd_str,
-                            self.stdout,
-                            self.stderr)
+                            output)
         return error_msg
 
     @staticmethod
@@ -258,14 +268,14 @@ def main():
             self.assertEqual(self._stdout, 'HIWORLD')
 
             self._cmd(cmd='pwd', stdout=DEVNULL)
-            self.assertEqual(self._proc.stdout, None)
+            self.assertEqual(self._proc.stdout, b'')
 
             try:
                 self._cmd(cmd='ls /xxx/rrr/vvv/ttt/cmdproc',
                           stderr=DEVNULL)
             except CmdProcError:
                 pass
-            self.assertEqual(self._proc.stderr, None)
+            self.assertEqual(self._proc.stderr, b'')
 
     tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdProc)
     ret = unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()

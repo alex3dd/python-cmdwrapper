@@ -75,11 +75,12 @@ def main():
             second_line = b'Second Line'
             byte_content = first_line + b'\n' + second_line
 
-            for content in [byte_content, byte_content.decode('utf-8')]:
+            utf8_byte_content = byte_content.decode('utf-8', errors='ignore')
+            for content in [byte_content, utf8_byte_content]:
                 cmd_output = CmdOutput(content)
 
                 if isinstance(content, bytes):
-                    content = content.decode('utf-8')
+                    content = content.decode('utf-8', errors='ignore')
 
                 # CmdOutput.__str__()
                 self.assertEqual(content, str(cmd_output))
@@ -89,14 +90,14 @@ def main():
 
                 # CmdOutput.firstline
                 self.assertEqual(cmd_output.firstline,
-                                 first_line.decode('utf-8'))
+                                 first_line.decode('utf-8', errors='ignore'))
 
                 # test CmdOutput.lines
                 self.assertEqual(cmd_output.lines[0],
-                                 first_line.decode('utf-8'))
+                                 first_line.decode('utf-8', errors='ignore'))
 
                 self.assertEqual(cmd_output.lines[1],
-                                 second_line.decode('utf-8'))
+                                 second_line.decode('utf-8', errors='ignore'))
 
             # test the case of an empty content
             cmd_output = CmdOutput('')
