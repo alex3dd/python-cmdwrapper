@@ -83,6 +83,13 @@ class CmdRunning(object):
                          stderr=self.proc.stderr,
                          returncode=self.proc.returncode)
 
+    def __iter__(self):
+        """Iter through stdout."""
+        # TODO: implement an stdout reader that can read from stdout while SSH
+        #       is running
+        for line in self.stdout.lines:
+            yield line
+
 
 class CmdWrapper(object):
     """Wrap any Linux command and run it as a Python method."""
