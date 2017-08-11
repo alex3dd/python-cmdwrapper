@@ -110,11 +110,6 @@ class CmdWrapper(object):
 
         self._cmd_proc_kwargs = {}
 
-    def __repr__(self):
-        """Return the repr."""
-        return pformat({'cmd': self._cmd, 'args': self._args,
-                        'cmd_proc_kwargs': self._cmd_proc_kwargs})
-
     def __call__(self, *args, **cmd_proc_kwargs):
         """Run the command."""
         if self._cmd is None:
@@ -129,6 +124,11 @@ class CmdWrapper(object):
 
         cmd_proc = CmdProc(cmd=cmd_args, **kwargs)
         return CmdRunning(cmd_proc)
+
+    def __repr__(self):
+        """Return the repr."""
+        return pformat({'cmd': self._cmd, 'args': self._args,
+                        'cmd_proc_kwargs': self._cmd_proc_kwargs})
 
     def timeout(self, timeout):
         """The default timeout."""

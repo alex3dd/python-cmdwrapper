@@ -39,14 +39,19 @@ class CmdOutput(object):
 
         return ''
 
+    def __str__(self):
+        """Return the output."""
+        return self.output
+
+    def __iter__(self):
+        """Iter through stdout."""
+        for line in self.lines:
+            yield line
+
     @property
     def output(self):
         """Return the output's content (string)."""
         return self._output
-
-    def __str__(self):
-        """Return the output."""
-        return self.output
 
     @output.setter
     def output(self, output):
