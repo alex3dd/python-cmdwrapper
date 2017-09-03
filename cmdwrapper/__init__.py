@@ -16,6 +16,7 @@ from pprint import pformat
 from subprocess import PIPE, DEVNULL, STDOUT
 from cmdwrapper.cmdoutput import CmdOutput
 from cmdwrapper.cmdproc import CmdProc
+from cmdwrapper.cmdproc import CmdProcError    # noqa
 
 
 assert sys.version_info >= (3, 3), "The Python version need to be >= 3.3"
