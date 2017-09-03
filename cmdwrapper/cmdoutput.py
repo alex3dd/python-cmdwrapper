@@ -98,6 +98,13 @@ def main():
                 self.assertEqual(cmd_output.lines[0],
                                  first_line.decode('utf-8', errors='ignore'))
 
+                # iterate
+                for item in cmd_output:
+                    iter_first_line = item
+                    break
+                self.assertEqual(iter_first_line,
+                                 first_line.decode('utf-8', errors='ignore'))
+
                 self.assertEqual(cmd_output.lines[1],
                                  second_line.decode('utf-8', errors='ignore'))
 

@@ -72,23 +72,13 @@ class CmdProc(object):
         To disable this feature: 'timeout=None'.
 
         """
-        if cmd:
-            assert isinstance(cmd, (list, str))
-
-        if cwd:
-            assert isinstance(cwd, str)
-
-        if env:
-            assert isinstance(env, dict)
-
-        assert stdout in (PIPE, DEVNULL, STDOUT, None)
-        assert stderr in (PIPE, DEVNULL, STDOUT, None)
-
-        if input:
-            assert isinstance(input, bytes)
-
-        if timeout:
-            assert isinstance(timeout, int)
+        assert isinstance(cmd, (list, str, type(None)))
+        assert isinstance(cwd, (str, type(None)))
+        assert isinstance(env, (dict, type(None)))
+        assert stdout in (PIPE, DEVNULL, STDOUT, type(None))
+        assert stderr in (PIPE, DEVNULL, STDOUT, type(None))
+        assert isinstance(input, (bytes, type(None)))
+        assert isinstance(timeout, (int, type(None)))
 
         self._cmd_list, self._cmd_str = self._cmd_split_types(cmd)
 

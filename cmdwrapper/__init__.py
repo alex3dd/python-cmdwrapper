@@ -95,71 +95,151 @@ class CmdRunning(object):
 class CmdWrapper(object):
     """Wrap any Linux command and run it as a Python method."""
 
-    def __init__(self, cmd=None, *args):
+    def __init__(self, cmd=None, args=None, **cmd_proc_kwargs):
         """Command + arguments to wrap.
 
         :cmd: the command.
-        :*args: the command's arguments.
+        :args: the command's arguments.
+        :**cmd_proc_kwargs: CmdProc class __init__ kwargs
+                           (timeout, cwd, env, input, stdout, stderr...).
 
         Example:
-        >>> ssh = CmdWrapper('ssh', '-vvvv')
+        >>> ssh = CmdWrapper('ssh', args=['-vvvv'])
         >>> ssh('server', 'ls', '/')
 
         """
         if cmd is not None:
             assert isinstance(cmd, str)
 
-        self._cmd = None
-        self._args = None
-        self.cmd(cmd)
-        self.args(*args)
+        # the internal variables
+        self._args = []
+        self._cmd_proc_kwargs = deepcopy(cmd_proc_kwargs)
 
-        self._cmd_proc_kwargs = {}
+        # setting the variables
+        assert isinstance(cmd, (str, type(None)))
+        self._cmd = cmd
+
+        assert isinstance(args, (list, type(None))), \
+            "The type of 'args' needs to be 'list' or None"
+        if args is not None:
+            for item in args:
+                assert isinstance(item, str)
+            self._args = list(args)
 
     def __call__(self, *args, **cmd_proc_kwargs):
-        """Run the command."""
-        if self._cmd is None:
-            cmd_args = []
-        else:
-            cmd_args = [self._cmd]
+        """Run the command.
 
+        >>> self('ssh', 'host')
+
+        """
+        # command
+        cmd_args = [] if self._cmd is None else [self._cmd]
+
+        # args
         cmd_args = cmd_args + self._args + list(args)
 
+        # kwargs
         kwargs = deepcopy(self._cmd_proc_kwargs)
         kwargs.update(cmd_proc_kwargs)
 
         cmd_proc = CmdProc(cmd=cmd_args, **kwargs)
-        return CmdRunning(cmd_proc)
+        return CmdRunning(cmd_proc=cmd_proc)
 
     def __repr__(self):
         """Return the repr."""
         return pformat({'cmd': self._cmd, 'args': self._args,
                         'cmd_proc_kwargs': self._cmd_proc_kwargs})
 
-    def timeout(self, timeout):
-        """The default timeout."""
-        assert isinstance(timeout, int)
-        self._cmd_proc_kwargs['timeout'] = timeout
-        return self
+    def copy(self, cmd=None, args=None, **cmd_proc_kwargs):
+        """Copy the object."""
+        cmd = cmd if cmd else self._cmd
+        args = args if args else self._args
+        kwargs = deepcopy(self._cmd_proc_kwargs)
+        kwargs.update(cmd_proc_kwargs)
+        return CmdWrapper(cmd=cmd, args=args, **kwargs)
 
     def get(self, option):
         """Return an option's value (env, cwd, cmd, args, etc.)."""
-        try:
-            return self._cmd_proc_kwargs[option]
-        except KeyError:
-            return None
+        return self._cmd_proc_kwargs[option]
 
-    def env(self, env):
-        """A dict with the environment variables."""
-        assert isinstance(env, dict)
-        self._cmd_proc_kwargs['env'] = env
-        return self
 
-    def cwd(self, cwd):
-        """The directory from where the command is going to be started."""
-        assert isinstance(cwd, str)
-        self._cmd_proc_kwargs['cwd'] = cwd
-        return self
+# TODO: remove this class
+class LegacyCmdWrapper(object):
+    """Wrap any Linux command and run it as a Python method."""
+
+    def __init__(self, cmd=None, args=None, timeout=None, cwd=None,
+                 env=None, input=None, stdout=PIPE, stderr=PIPE):
+        """Command + arguments to wrap.
+
+        :cmd: the command.
+        :args: the command's arguments.
+        :timeout: the command will stop after 'timeout' seconds.
+        :cwd: the directory where the command will run.
+        :env: a dict with the environment variables.
+        :input: the input content. Equivalent to 'input' in Popen.communicate.
+        :stdout: PIPE, STDOUT or STDERR (constants). Same as subprocess.Popen.
+        :stderr: PIPE, STDOUT or STDERR (constants). Same as subprocess.Popen.
+
+        Example:
+        >>> ssh = CmdWrapper('ssh', args=['-vvvv'])
+        >>> ssh('server', 'ls', '/')
+
+        """
+        if cmd is not None:
+            assert isinstance(cmd, str)
+
+        # the internal variables
+        self._cmd = None
+        self._args = []
+        self._cmd_proc_kwargs = {}
+
+        # setting the variables
+        self.cmd(cmd)
+
+        if args is not None:
+            self.args(args)
+
+        if timeout is not None:
+            self.timeout(timeout)
+
+        if cwd is not None:
+            self.cwd(cwd)
+
+        if env is not None:
+            self.env(env)
+
+        if input is not None:
+            self.input(input)
+
+        assert stdout in (PIPE, DEVNULL, STDOUT, None)
+        self._cmd_proc_kwargs['stdout'] = stdout
+
+        assert stderr in (PIPE, DEVNULL, STDOUT, None)
+        self._cmd_proc_kwargs['stderr'] = stderr
+
+    def __call__(self, *args, **cmd_proc_kwargs):
+        """Run the command.
+
+        >>> self('ssh', 'host')
+
+        """
+        # command
+        cmd_args = [] if self._cmd is None else [self._cmd]
+
+        # args
+        cmd_args = cmd_args + self._args + list(args)
+
+        # kwargs
+        kwargs = deepcopy(self._cmd_proc_kwargs)
+        kwargs.update(cmd_proc_kwargs)
+
+        cmd_proc = CmdProc(cmd=cmd_args, **self._cmd_proc_kwargs)
+        return CmdRunning(cmd_proc=cmd_proc)
+
+    def __repr__(self):
+        """Return the repr."""
+        return pformat({'cmd': self._cmd, 'args': self._args,
+                        'cmd_proc_kwargs': self._cmd_proc_kwargs})
 
     def cmd(self, cmd):
         """Change the cmd."""
@@ -169,18 +249,34 @@ class CmdWrapper(object):
         self._cmd = cmd
         return self
 
-    def args(self, *args):
+    def args(self, args):
         """Change the command's arguments."""
-        args = list(args)
+        assert isinstance(args, list), \
+            "The type of 'args' needs to be 'list'"
+
         for arg in args:
             assert isinstance(arg, str)
 
         self._args = list(args)
         return self
 
-    def copy(self):
-        """Copy the object."""
-        return deepcopy(self)
+    def timeout(self, timeout):
+        """The default timeout."""
+        assert isinstance(timeout, int)
+        self._cmd_proc_kwargs['timeout'] = timeout
+        return self
+
+    def cwd(self, cwd):
+        """The directory from where the command is going to be started."""
+        assert isinstance(cwd, str)
+        self._cmd_proc_kwargs['cwd'] = cwd
+        return self
+
+    def env(self, env):
+        """A dict with the environment variables."""
+        assert isinstance(env, dict)
+        self._cmd_proc_kwargs['env'] = env
+        return self
 
     def input(self, content):
         """The stdin's content."""
@@ -196,10 +292,25 @@ class CmdWrapper(object):
         self._cmd_proc_kwargs['stderr'] = stderr
         return self
 
+    def get(self, option):
+        """Return an option's value (env, cwd, cmd, args, etc.)."""
+        try:
+            return self._cmd_proc_kwargs[option]
+        except KeyError:
+            return None
+
+    def copy(self):
+        """Copy the object."""
+        return deepcopy(self)
+
 
 def main():
     """Test the class CmdResult."""
     import unittest
+
+    import logging
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(name)s %(message)s')
 
     class TestCmdResult(unittest.TestCase):
         """Testing the class CmdResult."""
@@ -220,24 +331,21 @@ def main():
             self.assertIn(stdout, to_str)
             self.assertIn(stderr, to_str)
 
-    class TestCmdWrapper(unittest.TestCase):
+    class TestLegacyCmdWrapper(unittest.TestCase):
         """Testing the class CmdWrapper."""
 
         def test_cmdwrapper(self):
             """Test: CmdWrapper()."""
-            cmd_wrapper = CmdWrapper()
+            cmd_wrapper = LegacyCmdWrapper()
             running = cmd_wrapper('bash', '-c', 'echo TEST')
             self.assertEqual(running.stdout.firstline, 'TEST')
 
-            bash = CmdWrapper('bash')
-            repr(bash)
-
-            bash.cmd('bash').args('-c').cwd('/').timeout(2).output()
-            self.assertEqual(bash.get('cwd'), '/')
-            self.assertRaises(KeyError, bash.get('HelloWorld'))
-            bash.env({'TEST': 'HIWORLD'})
+            bash = CmdWrapper('bash', args=['-c'],
+                              cwd='/', timeout=2,
+                              env={'TEST': 'HIWORLD'})
 
             bash_copy = bash.copy()
+
             # pylint: disable=protected-access
             self.assertNotEqual(id(bash_copy._args), id(bash._args))
 
@@ -247,8 +355,7 @@ def main():
             running = bash('pwd')
             self.assertEqual(running.stdout.firstline, '/')
 
-            bash.input(b'HIWORLD')
-            running = bash('cat')
+            running = bash('cat', input=b'HIWORLD')
             self.assertEqual(running.stdout.firstline, 'HIWORLD')
 
             cmd_result = running.result
@@ -278,7 +385,7 @@ def main():
     tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdRunning)
     ret |= unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
 
-    tests = unittest.TestLoader().loadTestsFromTestCase(TestCmdWrapper)
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestLegacyCmdWrapper)
     ret |= unittest.TextTestRunner(verbosity=5).run(tests).wasSuccessful()
 
     sys.exit(int(not ret))
