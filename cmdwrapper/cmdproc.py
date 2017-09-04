@@ -75,8 +75,8 @@ class CmdProc(object):
         assert isinstance(cmd, (list, str, type(None)))
         assert isinstance(cwd, (str, type(None)))
         assert isinstance(env, (dict, type(None)))
-        assert stdout in (PIPE, DEVNULL, STDOUT, type(None))
-        assert stderr in (PIPE, DEVNULL, STDOUT, type(None))
+        assert stdout in (PIPE, DEVNULL, STDOUT, None)
+        assert stderr in (PIPE, DEVNULL, STDOUT, None)
         assert isinstance(input, (bytes, type(None)))
         assert isinstance(timeout, (int, type(None)))
 
