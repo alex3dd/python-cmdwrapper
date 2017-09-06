@@ -53,6 +53,7 @@ class CmdRunning(object):
         """Wait until the process is terminated.
 
         If the returncode != 0 an exception will be raised.
+        :Returns: self
 
         """
         self.proc.wait()
